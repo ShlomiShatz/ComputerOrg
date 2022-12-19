@@ -13,10 +13,10 @@ cinnum: .string "%d"    # format for number input
 run_main:   # the function that runs the begining of the program
     pushq   %rbp    # saving old frame pointer
     movq    %rsp,   %rbp    # creat the new frame pointer
+    subq    $528,       %rsp    # allocating memory for all the things
 
-    subq    $768,       %rsp    # allocating memory for all the things
     leaq    -512(%rbp), %rsi    # passing the address to scanf
-    movq    $cinstr,    %rdi    # passing the input format to scanf - first number
+    movq    $cinnum,    %rdi    # passing the input format to scanf - first number
     xor     %rax,       %rax    # zeroing %rax
     call    scanf   # taking in the input
 
@@ -26,7 +26,7 @@ run_main:   # the function that runs the begining of the program
     call    scanf   # taking in the input
 
     leaq    -256(%rbp), %rsi    # passing the address to scanf
-    movq    $cinstr,    %rdi    # passing the input format to scanf - second number
+    movq    $cinnum,    %rdi    # passing the input format to scanf - second number
     xor     %rax,       %rax    # zeroing %rax
     call    scanf   # taking in the input
 
@@ -35,12 +35,12 @@ run_main:   # the function that runs the begining of the program
     xor     %rax,       %rax    # zeroing %rax
     call    scanf   # taking in the input
 
-    leaq    -768(%rbp), %rsi    # passing the address to scanf
+    leaq    -528(%rbp), %rsi    # passing the address to scanf
     movq    $cinnum,    %rdi    # passing the input format to scanf - menu option
     xor     %rax,       %rax    # zeroing %rax
     call    scanf   # taking in the input
 
-    movzbq    -768(%rbp), %rdi    # passing the first argument to the menu - menu option
+    movzbq   -528(%rbp), %rdi    # passing the first argument to the menu - menu option
     leaq    -512(%rbp), %rsi    # passing the second argument to the menu - first pstring
     leaq    -256(%rbp), %rdx    # passing the third argument to the menu - second pstring
     call     func_select    # calling the menu function

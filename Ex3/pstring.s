@@ -2,7 +2,7 @@
 # Part of the third exercise in Computer Organization course
     .section .rodata:
 strerr: .string "Invalid Input!\n"
-
+strstr: .string "current %s\n"
     .text	# text section
     .globl pstrlen
     .type pstrlen, @function    # psrtlen is the beginning of a function
@@ -10,7 +10,7 @@ pstrlen:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
     xor	%rax,		%rax 	# zeroing %rax
-    movb  %dil,   %al
+    movzbq  (%rdi),   %rax  # moves the first byte of the pstring to %rax
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
@@ -19,32 +19,29 @@ pstrlen:
     .type	replaceChar, 	@function	# replaceChar is the beginning of a function
 replaceChar:    # replaces the old char with new char in a pstring
     pushq	%rbp			# save the old frame pointer
-	movq	%rsp,		%rbp	# create the new frame pointer
-    
-    leaq    (%rdi), %r12
+	movq	%rsp,		%rbp	# create the new frame pointer 
 
     xor %rcx,       %rcx    # zeros %rcx to be used as a counter
     leaq	1(%rdi),	%rdi	# advances the pointer by a byte
-    inc %cl    # increments %cl
-    cmpb   %dil,   %sil # checks if the chars are equals
+    leaq	(%rdi),	%r8	# advances the pointer by a byte
+    cmpb   (%rdi),   %sil # checks if the chars are equals
     je  swapChar    # if so, jumps to the relevant part
 
 LOOP0:	# the LOOP function for this part
-    cmpb %dil, 0   # checks if the string is finished
+    cmpb (%rdi), %cl   # checks if the string is finished
     je  END0    # if so, jumps to the end
-    leaq	1(%rdi),	%rdi	# advances the pointer by a byte
+    leaq	(%rcx, %rdi),	%r8	# advances the pointer by a byte
     inc %cl # increments the counter
-    cmpb   %dil,   %sil # compares the two chars
+    cmpb   %r8b,   %sil # compares the two chars
     je  swapChar    # if it is equal, jumps to the relevant location
     jmp LOOP0   # jumps back to the loop
 
 swapChar:
-    movb    %dl,    %dil    # moves the new char to the old's place
+    movb    %dl,    (%r8)    # moves the new char to the old's place
     jmp LOOP0   # jumps back to the loop
     
 END0:
-    movq    %r12,   %rdi   # moves the pointer to its original spot
-    movq    %rdi,   %rax    # moves the result to %rax
+    movq    %r12,   %rax    # moves the result to %rax
     movq	%rbp,   %rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function

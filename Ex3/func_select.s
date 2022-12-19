@@ -51,41 +51,41 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     jmp END # jumps to the end of the program
 
 .L33:   # options 32-33
-    movq    %rsi,   %r8 # moving the first pstring to %r8
-    movq    %rdx,   %r9 # moving the second pstring to %r9
+    movq    %rsi,   %r12 # moving the first pstring to %r8
+    movq    %rdx,   %r13 # moving the second pstring to %r9
     subq    $32, %rsp   # allocating memory to be used
 
     leaq    -16(%rbp),    %rsi   # passing the address to scanf
     movq    $charInput, %rdi    # passing the format to scanf
     xor %rax,   %rax    # zero's %rax
     call    scanf   # taking the input
-    movzbq    -16(%rbp),    %r10 # moves the input to %r10
+    movzbq    -16(%rbp),    %r14 # moves the input to %r10
 
     leaq    -32(%rbp),    %rsi  # passing the address to scanf
     movq    $charInput, %rdi    # passing the format to scanf
     xor %rax,   %rax    # zero's %rax
     call    scanf   # taking the input
-    movzbq    -32(%rbp),    %r11    # moves the input to %r11
+    movzbq    -32(%rbp),    %r15    # moves the input to %r11
 
-    movq    %r8,    %rdi    # passing the first pstring
-    movq    %r10,   %rsi  # passing the 'old char'
-    movq    %r11,   %rdx  # passing the 'new char'
+    movq    %r12,    %rdi    # passing the first pstring
+    movq    %r14,   %rsi  # passing the 'old char'
+    movq    %r15,   %rdx  # passing the 'new char'
     xor %rax,   %rax    # zero's %rax
     call    replaceChar # calls the relevant function
-    movq    %rax,  %r8  # saves the result in %r8
+    movq    %rax,  %r12  # saves the result in %r8
 
-    movq    %r9,    %rdi    # passing the second pstring
-    movzbq  (%r10),   %rsi  # passing the 'old char'
-    movzbq  (%r11),   %rdx  # passing the 'new char'
+    movq    %r13,    %rdi    # passing the second pstring
+    movq    %r14,   %rsi  # passing the 'old char'
+    movq    %r15,   %rdx  # passing the 'new char'
     xor %rax,   %rax    # zero's %rax
     call    replaceChar # calls the relevant function
-    movq    %rax,  %r9  # saves the result in %r9
+    movq    %rax,  %r8  # saves the result in %r9
 
     movq    $secondFormat,  %rdi    # passing the printing format for printf
-    movzbq  (%r10),   %rsi  # passing the 'old char'
-    movzbq  (%r11),   %rdx  # passing the 'new char'
-    movq    %r8,    %rcx    # passing the first pstring
-    movq    %r9,    %r8 # passing the second pstring
+    movq    %r14,   %rsi  # passing the 'old char'
+    movq    %r15,   %rdx  # passing the 'new char'
+    movq    %r12,    %rcx    # passing the first pstring
+    movq    %r13,    %r8 # passing the second pstring
     xor %rax,   %rax    # zero's %rax
     call printf # calls printf
     jmp END # jumps to the end of the program
