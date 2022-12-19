@@ -63,17 +63,17 @@ pstrijcpy:
     cmpb    %dil,   %cl # checks if i >= dst.size
     jle  ERR
 
-    leaq    (%rdx, %rsi),    %r8
-    leaq    (%rdx, %rdi),    %r9
+    leaq    1(%rdx, %rsi),    %r8
+    leaq    1(%rdx, %rdi),    %r9
 
 LOOP1:
     cmpb    %dl,    %cl
-    jg  END1
-    movzbq    (%r8),   %r10
+    jl  END1
+    movb    (%r8),   %r10b
     movb    %r10b,   (%r9)
     leaq    1(%r8), %r8
     leaq    1(%r9), %r9
-    inc %cl
+    inc %dl
     jmp LOOP1
 
 ERR:
