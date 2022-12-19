@@ -2,14 +2,13 @@
 # Part of the third exercise in Computer Organization course
     .section .rodata:
 strerr: .string "Invalid Input!\n"
-strstr: .string "current %s\n"
+
     .text	# text section
     .globl pstrlen
     .type pstrlen, @function    # psrtlen is the beginning of a function
 pstrlen:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
-    xor	%rax,		%rax 	# zeroing %rax
     movzbq  (%rdi),   %rax  # moves the first byte of the pstring to %rax
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
@@ -35,11 +34,11 @@ LOOP0:	# the LOOP function for this part
     je  swapChar    # if it is equal, jumps to the relevant location
     jmp LOOP0   # jumps back to the loop
 
-swapChar:
+swapChar:   # the part that swaps the character
     movb    %dl,    (%r8)    # moves the new char to the old's place
     jmp LOOP0   # jumps back to the loop
     
-END0:
+END0:   # ending section
     leaq    1(%rdi),   %rax    # moves the result to %rax
     movq	%rbp,   %rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
@@ -50,6 +49,9 @@ END0:
 pstrijcpy:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
+
+    cmpb    $1,    %dl  # checks if the index is smaller than 1
+    jl ERR
     cmpb    %dl,   %cl  # checks if i > j
     jl  ERR
     cmpb    %sil,   %dl # checks if j >= src.size
@@ -60,17 +62,20 @@ pstrijcpy:
     jle  ERR
     cmpb    %dil,   %cl # checks if i >= dst.size
     jle  ERR
-    addb    %dl,  %sil
-    addb    %dl,  %dil
-    movb    %dil,   %sil
+
+    leaq    (%rdx, %rsi),    %r8
+    leaq    (%rdx, %rdi),    %r9
+
 LOOP1:
+    cmpb    %dl,    %cl
+    jg  END1
     inc %cl
-    cmpb    %cl,    %dl
-    jl  END1
-    inc %dil
-    inc %sil
-    movb    %dil,   %sil
+    leaq    1(%r8), %r8
+    leaq    1(%r9), %r9
+    movzbq    (%r8),   %r10
+    movb    %r10b,   (%r9)
     jmp LOOP1
+
 ERR:
     movq	$strerr,	%rdi	# the string to be passed to printf
 	xor	%rax,		%rax 	# zeroing %rax
@@ -78,7 +83,7 @@ ERR:
     jmp END1
 
 END1:
-    movb    %dil,       %al
+    leaq    (%rdi),     %rax
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
@@ -124,9 +129,7 @@ END3:
 	ret				# return to caller function
 
 
-;     .globl pstrijcmp
-;     .type pstrijcmp, @function
-; pstrijcmp:
+     .globl pstrijcmp
+     .type pstrijcmp, @function
+ pstrijcmp:
     
-
-

@@ -91,32 +91,38 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     jmp END # jumps to the end of the program
 
 .L35:   # option 35
-    movq    %rsi,   %r8 # moving the first pstring to %r8 - dst
-    movq    %rdx,   %r9 # moving the second pstring to %r9 - src
+    movq    %rsi,   %r12 # moving the first pstring to %r8 - dst
+    movq    %rdx,   %r13 # moving the second pstring to %r9 - src
     subq    $32, %rsp   # allocating memory to be used
 
     leaq    -16(%rbp),    %rsi   # passing the address to scanf
     movq    $numInput, %rdi    # passing the format to scanf
     xor %rax,   %rax    # zero's %rax
     call    scanf   # taking the input
-    movzbq    -16(%rbp),    %r10 # moves the input to %r10 - i
+    leaq    -16(%rbp),    %r14 # moves the input to %r10 - i
 
     leaq    -32(%rbp),    %rsi  # passing the address to scanf
     movq    $numInput, %rdi    # passing the format to scanf
     xor %rax,   %rax    # zero's %rax
     call    scanf   # taking the input
-    movzbq    -32(%rbp),    %r11    # moves the input to %r11 - j
+    leaq    -32(%rbp),    %r15    # moves the input to %r11 - j
 
-    movq    %r8,    %rdi    # passes the dst pstring
-    movq    %r9,    %rsi    # passes the src pstring
-    movq    %r10,   %rdx    # passes the i value
-    movq    %r11,   %rcx    # passes the j value
+    movq    %r12,    %rdi    # passes the dst pstring
+    movq    %r13,    %rsi    # passes the src pstring
+    movzbq    (%r14),   %rdx    # passes the i value
+    movzbq    (%r15),   %rcx    # passes the j value
     call    pstrijcpy   # calls relevant function
-    movzbq  (%rax),   %rsi  # passes the length
-    leaq    1(%rax),  %rax  # advances the pointer by 1
-    movq    %rax,   %rdx    # passes the string
+
+    leaq    (%rax), %rdx
+    movzbq  (%rdx), %rsi
     movq    $thirdFormat,   %rdi    # passes the needed format
-    xor %rax,   %rax    # zero's %rax
+    xor %rax,   %rax
+    call    printf  # calls printf
+
+    leaq    (%r13), %rdx
+    movzbq  (%rdx), %rsi
+    movq    $thirdFormat,   %rdi    # passes the needed format
+    xor %rax,   %rax
     call    printf  # calls printf
     jmp END # jumps to the end of the program
 
