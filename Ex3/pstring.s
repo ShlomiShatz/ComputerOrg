@@ -40,7 +40,7 @@ swapChar:
     jmp LOOP0   # jumps back to the loop
     
 END0:
-    leaq    (%rdi),   %rax    # moves the result to %rax
+    leaq    1(%rdi),   %rax    # moves the result to %rax
     movq	%rbp,   %rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
