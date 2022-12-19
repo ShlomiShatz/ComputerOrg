@@ -69,11 +69,11 @@ pstrijcpy:
 LOOP1:
     cmpb    %dl,    %cl
     jg  END1
-    inc %cl
-    leaq    1(%r8), %r8
-    leaq    1(%r9), %r9
     movzbq    (%r8),   %r10
     movb    %r10b,   (%r9)
+    leaq    1(%r8), %r8
+    leaq    1(%r9), %r9
+    inc %cl
     jmp LOOP1
 
 ERR:

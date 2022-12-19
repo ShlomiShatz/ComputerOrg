@@ -113,8 +113,8 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     movzbq    (%r15),   %rcx    # passes the j value
     call    pstrijcpy   # calls relevant function
 
-    leaq    (%rax), %rdx
-    movzbq  (%rdx), %rsi
+    movzbq  (%rax), %rsi
+    leaq    1(%rax), %rdx
     movq    $thirdFormat,   %rdi    # passes the needed format
     xor %rax,   %rax
     call    printf  # calls printf
