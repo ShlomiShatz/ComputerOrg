@@ -65,21 +65,21 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     movq    $charInput, %rdi    # passing the format to scanf
     xor %rax,   %rax    # zero's %rax
     call    scanf   # taking the input
-    movzbq    -32(%rbp),    %r15    # moves the input to %r11
+    movzbq    -32(%rbp),    %r15    # moves the input to %r15
 
     movq    %r12,    %rdi    # passing the first pstring
     movq    %r14,   %rsi  # passing the 'old char'
     movq    %r15,   %rdx  # passing the 'new char'
     xor %rax,   %rax    # zero's %rax
     call    replaceChar # calls the relevant function
-    leaq    (%rax),  %r12  # saves the result in %r8
+    leaq    (%rax),  %r12  # saves the result in %r12
 
     movq    %r13,    %rdi    # passing the second pstring
     movq    %r14,   %rsi  # passing the 'old char'
     movq    %r15,   %rdx  # passing the 'new char'
     xor %rax,   %rax    # zero's %rax
     call    replaceChar # calls the relevant function
-    leaq    (%rax),  %r8  # saves the result in %r9
+    leaq    (%rax),  %r13  # saves the result in %r9
 
     movq    $secondFormat,  %rdi    # passing the printing format for printf
     movq    %r14,   %rsi  # passing the 'old char'
