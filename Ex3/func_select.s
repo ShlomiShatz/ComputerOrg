@@ -72,14 +72,14 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     movq    %r15,   %rdx  # passing the 'new char'
     xor %rax,   %rax    # zero's %rax
     call    replaceChar # calls the relevant function
-    movq    %rax,  %r12  # saves the result in %r8
+    leaq    (%rax),  %r12  # saves the result in %r8
 
     movq    %r13,    %rdi    # passing the second pstring
     movq    %r14,   %rsi  # passing the 'old char'
     movq    %r15,   %rdx  # passing the 'new char'
     xor %rax,   %rax    # zero's %rax
     call    replaceChar # calls the relevant function
-    movq    %rax,  %r8  # saves the result in %r9
+    leaq    (%rax),  %r8  # saves the result in %r9
 
     movq    $secondFormat,  %rdi    # passing the printing format for printf
     movq    %r14,   %rsi  # passing the 'old char'

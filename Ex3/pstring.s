@@ -22,17 +22,16 @@ replaceChar:    # replaces the old char with new char in a pstring
 	movq	%rsp,		%rbp	# create the new frame pointer 
 
     xor %rcx,       %rcx    # zeros %rcx to be used as a counter
-    leaq	1(%rdi),	%rdi	# advances the pointer by a byte
-    leaq	(%rdi),	%r8	# advances the pointer by a byte
-    cmpb   (%rdi),   %sil # checks if the chars are equals
+    leaq	1(%rdi),	%r8	# loads the pointer to different register
+    cmpb   (%r8),   %sil # checks if the chars are equals
     je  swapChar    # if so, jumps to the relevant part
 
 LOOP0:	# the LOOP function for this part
+    inc %cl # increments the counter
+    leaq	(%rcx, %rdi),	%r8	# advances the pointer by a byte
     cmpb (%rdi), %cl   # checks if the string is finished
     je  END0    # if so, jumps to the end
-    leaq	(%rcx, %rdi),	%r8	# advances the pointer by a byte
-    inc %cl # increments the counter
-    cmpb   %r8b,   %sil # compares the two chars
+    cmpb   (%r8),   %sil # compares the two chars
     je  swapChar    # if it is equal, jumps to the relevant location
     jmp LOOP0   # jumps back to the loop
 
@@ -41,7 +40,7 @@ swapChar:
     jmp LOOP0   # jumps back to the loop
     
 END0:
-    movq    %r12,   %rax    # moves the result to %rax
+    leaq    (%rdi),   %rax    # moves the result to %rax
     movq	%rbp,   %rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
