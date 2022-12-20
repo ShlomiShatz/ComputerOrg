@@ -1,5 +1,3 @@
-    .include "pstring.s"
-    
     .section .rodata
 charInput:      .string   "%s"  # format for char input
 numInput:       .string   "%d"  # format for int input

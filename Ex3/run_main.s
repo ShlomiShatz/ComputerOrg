@@ -1,8 +1,5 @@
 # 316093202 Shlomo Shatz
 # Part of the third exercise in Computer Organization course
-.include    "func_select.s"
-
-
     .data
 cinstr: .string "%s"    # format for string input
 cinnum: .string "%d"    # format for number input

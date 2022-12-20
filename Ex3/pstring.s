@@ -79,7 +79,7 @@ LOOP1:
     jmp LOOP1
 
 ERR:
-    movq	$stringput,	%rdi	# the string to be passed to printf
+    movq	$strerr,	%rdi	# the string to be passed to printf
 	xor	%rax,		%rax 	# zeroing %rax
     pushq   %r10
 	call	printf			# calling printf to print
