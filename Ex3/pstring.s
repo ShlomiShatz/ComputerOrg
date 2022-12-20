@@ -56,13 +56,13 @@ pstrijcpy:
     jb ERR
     cmpb    %dl,   %cl  # checks if i > j
     jb  ERR
-    cmpb    (%rsi),   %dl # checks if j >= src.size
+    cmpb    (%rsi),   %dl # checks if i >= src.size
     jae  ERR
-    cmpb    (%rdi),   %dl # checks if j >= dst.size
+    cmpb    (%rdi),   %dl # checks if i >= dst.size
     jae  ERR
-    cmpb    (%rsi),   %cl # checks if i >= src.size
+    cmpb    (%rsi),   %cl # checks if j >= src.size
     jae  ERR
-    cmpb    (%rdi),   %cl # checks if i >= dst.size
+    cmpb    (%rdi),   %cl # checks if j >= dst.size
     jae  ERR
 
     leaq    1(%rdx, %rsi),    %r8
@@ -83,7 +83,6 @@ ERR:
 	xor	%rax,		%rax 	# zeroing %rax
 	call	printf			# calling printf to print
     leaq    (%r12),    %rdi
-    jmp END1
 
 END1:
     leaq    (%rdi),     %rax
@@ -149,34 +148,57 @@ END3:
     jb ERR0
     cmpb    %dl,   %cl  # checks if i > j
     jb  ERR0
-    cmpb    (%rsi),   %dl # checks if j > src.size
-    ja  ERR0
-    cmpb    (%rdi),   %dl # checks if j > dst.size
-    ja  ERR0
-    cmpb    (%rsi),   %cl # checks if i > src.size
-    ja  ERR0
-    cmpb    (%rdi),   %cl # checks if i > dst.size
-    ja  ERR0
+    cmpb    (%rsi),   %dl # checks if i > src.size
+    jae  ERR0
+    cmpb    (%rdi),   %dl # checks if i > dst.size
+    jae  ERR0
+    cmpb    (%rsi),   %cl # checks if j > src.size
+    jae  ERR0
+    cmpb    (%rdi),   %cl # checks if j > dst.size
+    jae  ERR0
 
     leaq    1(%rdx, %rsi),    %r8
     leaq    1(%rdx, %rdi),    %r9
 
+    xorq    %r12,   %r12
+    xorq    %r13,   %r13
 LOOP2:
     cmpb    %dl,    %cl
-    je  END2
+    jb  COMP
+
+    addb    (%r8),  %r12b
+    addb    (%r9),  %r13b
     leaq    1(%r8), %r8
     leaq    1(%r9), %r9
     inc %dl
     jmp LOOP2
 
+COMP:
+    cmpq    %r13,   %r12
+    jg  GRTR
+    cmpq    %r13,   %r12
+    je  EQL
+    cmpq    %r13,   %r12
+    jl  LWR
+
+GRTR:
+    movq    $1, %rax
+    jmp END2
+
+EQL:
+    movq    $0, %rax
+    jmp END2
+
+LWR:
+    movq    $-1, %rax
+    jmp END2
+
+
 ERR0:
     movq	$strerr,	%rdi	# the string to be passed to printf
 	xor	%rax,		%rax 	# zeroing %rax
-    pushq   %r10
 	call	printf			# calling printf to print
-    popq    %r10
-    movq    $-2,    %rdi
-    jmp END2
+    movq    $-2,    %rax
 
 END2:
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory

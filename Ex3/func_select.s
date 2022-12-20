@@ -170,7 +170,7 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     movzbq    (%r15),   %rcx    # passes the j value
     call    pstrijcmp   # calls relevant function
 
-    movzbq  (%rax), %rsi
+    movq  %rax, %rsi
     movq    $fourthFormat,   %rdi    # passes the needed format
     xor %rax,   %rax
     call    printf  # calls printf
