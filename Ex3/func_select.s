@@ -91,8 +91,8 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     jmp END # jumps to the end of the program
 
 .L35:   # option 35
-    movq    %rsi,   %r12 # moving the first pstring to %r8 - dst
-    movq    %rdx,   %r13 # moving the second pstring to %r9 - src
+    leaq    (%rsi),   %r12 # moving the first pstring to %r8 - dst
+    leaq    (%rdx),   %r13 # moving the second pstring to %r9 - src
     subq    $32, %rsp   # allocating memory to be used
 
     leaq    -16(%rbp),    %rsi   # passing the address to scanf
@@ -119,8 +119,8 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     xor %rax,   %rax
     call    printf  # calls printf
 
-    leaq    (%r13), %rdx
-    movzbq  (%rdx), %rsi
+    movzbq  (%r13), %rsi
+    leaq    1(%r13), %rdx
     movq    $thirdFormat,   %rdi    # passes the needed format
     xor %rax,   %rax
     call    printf  # calls printf

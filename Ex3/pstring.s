@@ -1,7 +1,7 @@
 # 316093202 Shlomo Shatz
 # Part of the third exercise in Computer Organization course
     .section .rodata:
-strerr: .string "Invalid Input!\n"
+strerr: .string  "Invalid Input!\n"
 
     .text	# text section
     .globl pstrlen
@@ -50,18 +50,20 @@ pstrijcpy:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
 
-    cmpb    $1,    %dl  # checks if the index is smaller than 1
-    jl ERR
+    leaq    (%rdi),    %r10
+    
+    cmpb    $0,    %dl  # checks if the index is smaller than 0
+    jb ERR
     cmpb    %dl,   %cl  # checks if i > j
-    jl  ERR
-    cmpb    %sil,   %dl # checks if j >= src.size
-    jle  ERR
-    cmpb    %dil,   %dl # checks if j >= dst.size
-    jle  ERR
-    cmpb    %sil,   %cl # checks if i >= src.size
-    jle  ERR
-    cmpb    %dil,   %cl # checks if i >= dst.size
-    jle  ERR
+    jb  ERR
+    cmpb    (%rsi),   %dl # checks if j >= src.size
+    jae  ERR
+    cmpb    (%rdi),   %dl # checks if j >= dst.size
+    jae  ERR
+    cmpb    (%rsi),   %cl # checks if i >= src.size
+    jae  ERR
+    cmpb    (%rdi),   %cl # checks if i >= dst.size
+    jae  ERR
 
     leaq    1(%rdx, %rsi),    %r8
     leaq    1(%rdx, %rdi),    %r9
@@ -77,9 +79,12 @@ LOOP1:
     jmp LOOP1
 
 ERR:
-    movq	$strerr,	%rdi	# the string to be passed to printf
+    movq	$stringput,	%rdi	# the string to be passed to printf
 	xor	%rax,		%rax 	# zeroing %rax
+    pushq   %r10
 	call	printf			# calling printf to print
+    popq    %r10
+    leaq    (%r10),    %rdi
     jmp END1
 
 END1:
