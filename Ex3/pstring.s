@@ -1,6 +1,6 @@
 # 316093202 Shlomo Shatz
 # Part of the third exercise in Computer Organization course
-    .section .rodata:
+    .section .rodata
 strerr: .string  "invalid input!\n"
 
     .text	# text section
@@ -50,7 +50,7 @@ pstrijcpy:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
 
-    leaq    (%rdi),    %r10
+    leaq    (%rdi),    %r12
     
     cmpb    $0,    %dl  # checks if the index is smaller than 0
     jb ERR
@@ -71,8 +71,8 @@ pstrijcpy:
 LOOP1:
     cmpb    %dl,    %cl
     jb  END1
-    movb    (%r8),   %r10b
-    movb    %r10b,   (%r9)
+    movb    (%r8),   %r12b
+    movb    %r12b,   (%r9)
     leaq    1(%r8), %r8
     leaq    1(%r9), %r9
     inc %dl
@@ -81,10 +81,8 @@ LOOP1:
 ERR:
     movq	$strerr,	%rdi	# the string to be passed to printf
 	xor	%rax,		%rax 	# zeroing %rax
-    pushq   %r10
 	call	printf			# calling printf to print
-    popq    %r10
-    leaq    (%r10),    %rdi
+    leaq    (%r12),    %rdi
     jmp END1
 
 END1:

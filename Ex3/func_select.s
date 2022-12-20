@@ -171,7 +171,7 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     call    pstrijcmp   # calls relevant function
 
     movzbq  (%rax), %rsi
-    movq    $fourth,   %rdi    # passes the needed format
+    movq    $fourthFormat,   %rdi    # passes the needed format
     xor %rax,   %rax
     call    printf  # calls printf
 
