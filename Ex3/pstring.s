@@ -1,7 +1,7 @@
 # 316093202 Shlomo Shatz
 # Part of the third exercise in Computer Organization course
     .section .rodata:
-strerr: .string  "Invalid Input!\n"
+strerr: .string  "invalid input!\n"
 
     .text	# text section
     .globl pstrlen
@@ -70,7 +70,7 @@ pstrijcpy:
 
 LOOP1:
     cmpb    %dl,    %cl
-    jl  END1
+    jb  END1
     movb    (%r8),   %r10b
     movb    %r10b,   (%r9)
     leaq    1(%r8), %r8
@@ -99,36 +99,43 @@ END1:
 swapCase:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
-    xor %cl,    %cl
-    movb    %dil,   %cl
-    inc %cl
-    addb	$1,	    (%rdi)	# advances the pointer by a first byte
+
+    xor %rcx,   %rcx
+    leaq    1(%rdi),   %r10
+    movzbq  (%rdi),     %r11
+
 LOOP3:
-    cmpb %dil, 0   # if the first byte of %rdi is null, jump to the end
+    cmpb %r11b, %cl   
     je  END3
-    cmpb    $65,    %dil
-    jl  NOTL
-    cmpb    $90,     %dil
-    jle UPPER
-    cmpb    $97,    %dil
-    jl  NOTL
-    cmpb    $122,   %dil
-    jle LOWER
+    cmpb    $65,    (%r10)
+    jb  NOTL
+    cmpb    $90,     (%r10)
+    jbe UPPER
+    cmpb    $97,    (%r10)
+    jb  NOTL
+    cmpb    $122,   (%r10)
+    jbe LOWER
     jmp NOTL
+
 UPPER:
-    addb    $32,    %dil
-    addb	$1,	    (%rdi)	# advances the pointer by a first byte
+    addb    $32,    (%r10)
+    leaq	1(%r10),	 %r10	# advances the pointer by a first byte
+    inc %cl
     jmp LOOP3
+
 LOWER:
-    subb    $32,    %dil
-    addb	$1,	    (%rdi)	# advances the pointer by a first byte
+    subb    $32,    (%r10)
+    leaq	1(%r10),    %r10	# advances the pointer by a first byte
+    inc %cl
     jmp LOOP3
+
 NOTL:
-    addb	$1,	    (%rdi)	# advances the pointer by a first byte
+    leaq	1(%r10),    %r10	# advances the pointer by a first byte
+    inc %cl
     jmp LOOP3
+
 END3:
-    subb    %cl,   (%rdi)
-    movq    %rdi,   %rax
+    leaq    (%rdi),   %rax
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
@@ -137,4 +144,43 @@ END3:
      .globl pstrijcmp
      .type pstrijcmp, @function
  pstrijcmp:
+    pushq	%rbp			# save the old frame pointer
+	movq	%rsp,		%rbp	# create the new frame pointer
     
+    cmpb    $0,    %dl  # checks if the index is smaller than 0
+    jb ERR0
+    cmpb    %dl,   %cl  # checks if i > j
+    jb  ERR0
+    cmpb    (%rsi),   %dl # checks if j > src.size
+    ja  ERR0
+    cmpb    (%rdi),   %dl # checks if j > dst.size
+    ja  ERR0
+    cmpb    (%rsi),   %cl # checks if i > src.size
+    ja  ERR0
+    cmpb    (%rdi),   %cl # checks if i > dst.size
+    ja  ERR0
+
+    leaq    1(%rdx, %rsi),    %r8
+    leaq    1(%rdx, %rdi),    %r9
+
+LOOP2:
+    cmpb    %dl,    %cl
+    je  END2
+    leaq    1(%r8), %r8
+    leaq    1(%r9), %r9
+    inc %dl
+    jmp LOOP2
+
+ERR0:
+    movq	$strerr,	%rdi	# the string to be passed to printf
+	xor	%rax,		%rax 	# zeroing %rax
+    pushq   %r10
+	call	printf			# calling printf to print
+    popq    %r10
+    movq    $-2,    %rdi
+    jmp END2
+
+END2:
+    movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
+	popq	%rbp			# restore old frame pointer
+	ret				# return to caller function

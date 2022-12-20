@@ -125,35 +125,63 @@ func_select:    # the menu function that calls the requested function. %rdi - op
     jmp END # jumps to the end of the program
 
 .L36:
-    movq    %rsi,   %rdi    # passes the first pstring
+    leaq    (%rsi),   %rdi    # passes the first pstring
     call    swapCase    # swaps cases
-    movq    %rax,   %r8 # moves the result to %r8
+    leaq    (%rax),   %r12 # moves the result to %r12
 
-    movq    %rdx,   %rdi    # passes the second pstring
+    leaq    (%rdx),   %rdi    # passes the second pstring
     call    swapCase    # swaps cases
-    movq    %rax,   %r9 # moves the result to %r9
+    leaq    (%rax),   %r13 # moves the result to %r13
     
-    movzbq  (%r8),   %rsi  # passes the length
-    leaq    1(%r8),  %r8  # advances the pointer by 1
-    movq    %rax,   %rdx    # passes the string
+    movzbq  (%r12),   %rsi  # passes the length
+    leaq    1(%r12),  %rdx  # advances the pointer by 1
     movq    $thirdFormat,   %rdi    # passes the needed format
     xor %rax,   %rax    # zero's %rax
     call    printf  # calls printf
 
-    movzbq  (%r9),   %rsi  # passes the length
-    leaq    1(%r9),  %r9  # advances the pointer by 1
-    movq    %rax,   %rdx    # passes the string
+    movzbq  (%r13),   %rsi  # passes the length
+    leaq    1(%r13),  %rdx  # advances the pointer by 1
     movq    $thirdFormat,   %rdi    # passes the needed format
     xor %rax,   %rax    # zero's %rax
     call    printf  # calls printf
+
     jmp END # jumps to the end of the program
 
 .L37:
+    leaq    (%rsi),   %r12 # moving the first pstring to %r8 - dst
+    leaq    (%rdx),   %r13 # moving the second pstring to %r9 - src
+    subq    $32, %rsp   # allocating memory to be used
+
+    leaq    -16(%rbp),    %rsi   # passing the address to scanf
+    movq    $numInput, %rdi    # passing the format to scanf
+    xor %rax,   %rax    # zero's %rax
+    call    scanf   # taking the input
+    leaq    -16(%rbp),    %r14 # moves the input to %r10 - i
+
+    leaq    -32(%rbp),    %rsi  # passing the address to scanf
+    movq    $numInput, %rdi    # passing the format to scanf
+    xor %rax,   %rax    # zero's %rax
+    call    scanf   # taking the input
+    leaq    -32(%rbp),    %r15    # moves the input to %r11 - j
+
+    movq    %r12,    %rdi    # passes the dst pstring
+    movq    %r13,    %rsi    # passes the src pstring
+    movzbq    (%r14),   %rdx    # passes the i value
+    movzbq    (%r15),   %rcx    # passes the j value
+    call    pstrijcmp   # calls relevant function
+
+    movzbq  (%rax), %rsi
+    movq    $fourth,   %rdi    # passes the needed format
+    xor %rax,   %rax
+    call    printf  # calls printf
+
+    jmp END # jumps to the end of the program
 
 INVALID:
     movq	$invalFormat,	%rdi	# the string is to be passed to printf
 	xor	%rax,		%rax 	# zeroing %rax
 	call	printf			# calling printf to print
+    
 END:
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
