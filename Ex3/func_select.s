@@ -16,9 +16,9 @@ invalFormat:    .string "invalid option!\n" # format to be used when invalid inp
     .quad .L37  # the option for inserting 37
 
     .text   # starting the text section
-.globl func_select  # making func_select global
-    .type func_select, @function    # defining func_select as a function
-func_select:    # the menu function that calls the requested function. %rdi - option, %rsi - first pstring, %rdx - second pstring
+.globl run_func  # making run_func global
+    .type run_func, @function    # defining run_func as a function
+run_func:    # the menu function that calls the requested function. %rdi - option, %rsi - first pstring, %rdx - second pstring
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
                             # checking for the option's validity

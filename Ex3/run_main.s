@@ -40,7 +40,7 @@ run_main:   # the function that runs the begining of the program
     movzbq   -528(%rbp), %rdi    # passing the first argument to the menu - menu option
     leaq    -512(%rbp), %rsi    # passing the second argument to the menu - first pstring
     leaq    -256(%rbp), %rdx    # passing the third argument to the menu - second pstring
-    call     func_select    # calling the menu function
+    call     run_func    # calling the menu function
 
 
     movq    %rbp,       %rsp   # restores the old stack pointer - release all used memory
