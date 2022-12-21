@@ -7,13 +7,16 @@ thirdFormat:    .string "length: %d, string: %s\n"  # format to be used later
 fourthFormat:   .string "compare result: %d\n"  # format to be used later
 invalFormat:    .string "invalid option!\n" # format to be used when invalid input has been taken
 
-    .align  16  # aligns the data
+    .align  8  # aligns the data
 .OPTIONS:   # the options for the menu
-    .quad .L31  # the option for inserting 31
-    .quad .L33  # the option for inserting 32/33
-    .quad .L35  # the option for inserting 35
-    .quad .L36  # the option for inserting 36
-    .quad .L37  # the option for inserting 37
+    .quad   .L31  # the option for inserting 31
+    .quad   .L33
+    .quad   .L33  # the option for inserting 32/33
+    .quad   .L39
+    .quad   .L35  # the option for inserting 35
+    .quad   .L36  # the option for inserting 36
+    .quad   .L37  # the option for inserting 37
+    .quad   .L39
 
     .text   # starting the text section
 .globl run_func  # making run_func global
@@ -21,19 +24,11 @@ invalFormat:    .string "invalid option!\n" # format to be used when invalid inp
 run_func:    # the menu function that calls the requested function. %rdi - option, %rsi - first pstring, %rdx - second pstring
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
-                            # checking for the option's validity
-    cmpq    $31,    %rdi    # check if the option is lower than 31
-    jl INVALID  # if so, go to invalid section
-    je .L31     # if it equals 31, jump to relevant funciton
-    cmpq    $33,    %rdi    # check if the option is lower or equal to 33
-    jle .L33    # if it equals 32/33, jump to relevant funciton
-    cmpq    $35,    %rdi    # check if the option equals 35
-    je  .L35    # if it equals 35, jump to relevant funciton
-    cmpq    $36,    %rdi    # check if the option equals 36
-    je  .L36    # if it equals 36, jump to relevant funciton
-    cmpq    $37,    %rdi    # check if the option equals 37
-    je  .L37    # if it equals 37, jump to relevant funciton
-    jmp INVALID # if so, go to invalid section
+
+    leaq    -31(%rdi),   %rdi # lowers the option by 31
+    cmpq    $8,    %rdi # compare with 8
+    ja  .L39 # if it is bigger, go to defaule case
+    jmp *.OPTIONS (, %rdi, 8) # go to relevant section in jump table
 
 .L31:   # option 31
     movq    %rsi,   %rdi    # moves the first pstring to the pstrlen funciton
@@ -177,7 +172,7 @@ run_func:    # the menu function that calls the requested function. %rdi - optio
 
     jmp END # jumps to the end of the program
 
-INVALID:
+.L39:
     movq	$invalFormat,	%rdi	# passes the needed format for printf
 	xorq    %rax,   %rax    # zeros %rax
 	call	printf			# calling printf to print
