@@ -52,6 +52,7 @@ END0:   # ending section
 pstrijcpy:
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
+    pushq   %r12    # saves the callee-saved convention register
 
     leaq    (%rdi),    %r12 # saves the dst pstring address in a register
     
@@ -89,6 +90,7 @@ ERR:
 
 END1:
     leaq    (%rdi),     %rax    # moves the result to the return address
+    popq    %r12    # restores the callee-saved convention register
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
@@ -146,6 +148,8 @@ END3:   # the end section of this function
  pstrijcmp: # compares two pstring lexicographically and returns 1, 0, -1, -2 based on the result
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
+    pushq   %r12    # saves the callee-saved convention register
+    pushq   %r13    # saves the callee-saved convention register
     
     cmpb    $0,    %dl  # checks if the index is smaller than 0
     jb ERR0 # if so, jumps to error section
@@ -196,6 +200,8 @@ ERR0:
     movq    $-2,    %rax    # moves -2 to the return value
 
 END2:
+    popq    %r13    # restores the callee-saved convention register
+    popq    %r12    # restores the callee-saved convention register
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function

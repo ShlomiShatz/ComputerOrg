@@ -10,13 +10,13 @@ invalFormat:    .string "invalid option!\n" # format to be used when invalid inp
     .align  8  # aligns the data
 .OPTIONS:   # the options for the menu
     .quad   .L31  # the option for inserting 31
-    .quad   .L33
-    .quad   .L33  # the option for inserting 32/33
-    .quad   .L39
+    .quad   .L33  # the options for inserting 32/33
+    .quad   .L33  # the options for inserting 32/33
+    .quad   .L39  # default error option for 34
     .quad   .L35  # the option for inserting 35
     .quad   .L36  # the option for inserting 36
     .quad   .L37  # the option for inserting 37
-    .quad   .L39
+    .quad   .L39  # default error option
 
     .text   # starting the text section
 .globl run_func  # making run_func global
@@ -24,6 +24,10 @@ invalFormat:    .string "invalid option!\n" # format to be used when invalid inp
 run_func:    # the menu function that calls the requested function. %rdi - option, %rsi - first pstring, %rdx - second pstring
     pushq	%rbp			# save the old frame pointer
 	movq	%rsp,		%rbp	# create the new frame pointer
+    pushq   %r12    # saves the callee-saved convention register
+    pushq   %r13    # saves the callee-saved convention register
+    pushq   %r14    # saves the callee-saved convention register
+    pushq   %r15    # saves the callee-saved convention register
 
     leaq    -31(%rdi),   %rdi # lowers the option by 31
     cmpq    $8,    %rdi # compare with 8
@@ -33,11 +37,11 @@ run_func:    # the menu function that calls the requested function. %rdi - optio
 .L31:   # option 31
     movq    %rsi,   %rdi    # moves the first pstring to the pstrlen funciton
     call    pstrlen # checks the pstring's length
-    movq    %rax,   %r8 # moves the result to backup register
+    movq    %rax,   %r12 # moves the result to backup register
     movq    %rdx,   %rdi    # moves the second pstring to the pstrlen funciton
     call    pstrlen # checks the pstring's length
     movq    $firstFormat,   %rdi    # passes the printing format to printf
-    movq    %r8,    %rsi    # passes the first result
+    movq    %r12,    %rsi    # passes the first result
     movq    %rax,   %rdx    # passes the second result
     xorq    %rax,   %rax    # zeros %rax
     call    printf  # calling printf
@@ -178,6 +182,10 @@ run_func:    # the menu function that calls the requested function. %rdi - optio
 	call	printf			# calling printf to print
     
 END:
+    popq    %r15    # restores the callee-saved convention register
+    popq    %r14    # restores the callee-saved convention register
+    popq    %r13    # restores the callee-saved convention register
+    popq    %r12    # restores the callee-saved convention register
     movq	%rbp,   	%rsp	# restores the old stack pointer - release all used memory
 	popq	%rbp			# restore old frame pointer
 	ret				# return to caller function
