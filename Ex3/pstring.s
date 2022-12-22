@@ -163,27 +163,18 @@ END3:   # the end section of this function
     leaq    1(%rdx, %rdi),    %r8   # moves the first string starting at location i to the register
     leaq    1(%rdx, %rsi),    %r9   # moves the second string starting at location i to the register
 
-    xorq    %r12,   %r12    # zeros register to be used as sum
-    xorq    %r13,   %r13    # zeros register to be used as sum
-
 LOOP2:  # the LOOP part of this section
     cmpb    %dl,    %cl # checks if the index has reached its limits (i > j)
-    jb  COMP    # if so, jumps to the relevant section
-
-    addb    (%r8),  %r12b   # adds the value of the current letter to the sum
-    addb    (%r9),  %r13b   # adds the value of the current letter to the sum
+    jb  EQL    # if so, jumps to the relevant section
+    movzbq  (%r8),  %r12    # moves the first byte to a different register
+    movzbq  (%r9),  %r13    # moves the first byte to a different register
+    cmpq    %r12,   %r13    # compares the current letters
+    jb  GRTR    # if the first is the bigger, jump to relevent section
+    ja  LWR     # if the first is the smaller, jump to relevent section
     leaq    1(%r8), %r8 # advances the pointer by 1
     leaq    1(%r9), %r9 # advances the pointer by 1
     inc %dl # increments the counter
     jmp LOOP2   # jumps back to the loop
-
-COMP:   # compares the sums
-    cmpq    %r13,   %r12    # compares the two sums
-    jg  GRTR    # if the first is greater than the second, go to relevant section
-    cmpq    %r13,   %r12    # compares the two sums
-    je  EQL # if the first is equal than the second, go to relevant section
-    cmpq    %r13,   %r12    # compares the two sums
-    jl  LWR # if the first is lower than the second, go to relevant section
 
 GRTR:   # handles if first > second
     movq    $1, %rax    # moves 1 to the return value
