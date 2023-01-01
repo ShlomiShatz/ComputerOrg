@@ -5,3 +5,6 @@ Ex3/main.o
 Ex3/pstring.o
 Ex3/run_main.o
 Ex3/func_select.o
+Ex3/testing
+Ex3/testPstringFunc.c
+Ex3/tests.sh
