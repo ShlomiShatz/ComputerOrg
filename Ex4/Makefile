@@ -20,6 +20,6 @@ showBMP: $(OBJECTS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	@rm -f $(OBJECTS) showBMP
+	@rm -f $(OBJECTS) showBMP Blur.bmp Filtered_Blur.bmp Filtered_Sharpen.bmp Row_Blur.bmp Row_Sharpen.bmp Sharpen.bmp
 
 
