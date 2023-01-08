@@ -6,9 +6,9 @@
 #include "readBMP.h"
 
 
-void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale);
+void doConvolution(Image *image, int kernel[3][3], int kernelScale);
 
-void doConvolutionFilter(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale);
+void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale);
 
 
 

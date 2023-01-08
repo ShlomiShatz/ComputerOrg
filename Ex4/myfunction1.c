@@ -6,7 +6,7 @@
 #include "myfunction1.h"
 #include "showBMP.h"
 
-void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale) {
+void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 
 	int row, col, locm = m, locn = n;
 
@@ -95,7 +95,7 @@ void doConvolution(Image *image, int kernelSize, int kernel[kernelSize][kernelSi
 	free(backupOrg);
 }
 
-void doConvolutionFilter(Image *image, int kernelSize, int kernel[kernelSize][kernelSize], int kernelScale) {
+void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 
 	int row, col, locm = m, locn = n;
 
