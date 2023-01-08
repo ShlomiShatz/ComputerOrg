@@ -152,7 +152,7 @@ def main():
         """)
 
 
-    print("View others' results at: https://docs.google.com/spreadsheets/d/1IRb06fPS6NSGQOE4hzGyIVe3N11uUlqWLj6H94guaZY")
+    print("View others' results at: https://docs.google.com/spreadsheets/d/1Dq6T_zcLeEfznZ_hyaiy3hMaljXtM9XUwCmvM9xhsxg/edit#gid=1031636320")
     print("Test script was written by Ron Even")
     print("Thank you for using it!")
 
