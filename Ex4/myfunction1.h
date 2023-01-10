@@ -5,11 +5,15 @@
 #include "myutil.h"
 #include "readBMP.h"
 
+void doConvolutionBlur(Image *image);
 
-void doConvolution(Image *image, int kernel[3][3], int kernelScale);
+void doConvolutionFilterBlur(Image *image);
 
-void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale);
+void doConvolutionSharp(Image *image);
 
+void doConvolutionRowBlur(Image *image);
+
+void doConvolutionRowSharp(Image *image);
 
 
 #endif
