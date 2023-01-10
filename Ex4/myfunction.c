@@ -5,7 +5,9 @@
 #include "myfunction.h"
 #include "writeBMP.h"
 
-
+/*
+	All kernels were implemented inside the called functions
+*/
 void myfunction(Image *image, char* srcImgpName, char* blurRsltImgName, char* sharpRsltImgName, char* rowBlurRsltImgName, char* rowSharpRsltImgName, char* filteredBlurRsltImgName, char* filteredSharpRsltImgName, char flag) {
 
 	if (flag == '1') {	
