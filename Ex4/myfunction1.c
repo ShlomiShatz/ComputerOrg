@@ -6,8 +6,6 @@
 #include "myfunction1.h"
 #include "showBMP.h"
 
-#include <stdio.h>
-
 void doConvolutionBlur(Image *image) {
 
 	int row, col, locn = n;
