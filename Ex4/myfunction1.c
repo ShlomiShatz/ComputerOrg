@@ -11,23 +11,20 @@
 void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 
 	int row, col, locn = n;
+	int nn = 1000000 * sizeof(pixel);
 
-	pixel* pixelsImg = malloc(locn*locn*sizeof(pixel));
-	pixel* backupOrg = malloc(locn*locn*sizeof(pixel));
+	pixel* pixelsImg = malloc(nn);
+	pixel* backupOrg = malloc(nn);
 
 	int aloc = 0 - locn;
 	for (row = 0 ; row < locn ; row++) {
 		aloc += locn;
 		int bloc = aloc + aloc + aloc;
-		for (col = 0 ; col < locn ; col += 2) {
+		for (col = 0 ; col < locn ; col++) {
 			int ploc = aloc + col;
 			int iloc = bloc + col + col + col;
 			memcpy(pixelsImg + ploc, image->data + iloc, 3 * sizeof(char));
 			memcpy(backupOrg + ploc, pixelsImg + ploc, 3* sizeof(char));
-			int vloc = aloc + col + 1;
-			int uloc = bloc + col + col + col + 3;
-			memcpy(pixelsImg + vloc, image->data + uloc, 3* sizeof(char));
-			memcpy(backupOrg + vloc, pixelsImg + vloc, 3* sizeof(char));
 		}
 	}
 
@@ -37,7 +34,7 @@ void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 	int locf = 0;
 	for (i = 1 ; i < dimReduce; i++) {
 		locf += locn;
-		int iimax = (i - 1) * (i-1 > 0), iimin = (i+1 < locn-1 ? i+1 : locn-1);
+		int iimax = i-1, iimin = i+1;
 		for (j =  1 ; j < dimReduce ; j++) {
 			int loc = locf + j;
 			//  pixelsImg[loc] = applyKernel(locn, i, j, backupOrg, kernelSize, kernel, kernelScale, filter);
@@ -52,7 +49,7 @@ void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 			memset(&sum, 0, sizeof(pixel_sum));
 
 			int kRow = 0;
-			int jjmax = (j - 1) * (j-1 > 0), jjmin = (j+1 < locn - 1 ? j+1 : locn - 1);
+			int jjmax = j-1, jjmin = j+1;
 			for(ii = iimax; ii <= iimin; ii++) {
 				int kCol = 0;
 				int loc2 = ii * locn;
@@ -63,9 +60,9 @@ void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 
 					int loc1 = loc2 + jj;
 					int weight = kernel[kRow][kCol];
-					sum.red += (backupOrg[loc1].red & 0xff) * weight;
-					sum.green += (backupOrg[loc1].green & 0xff) * weight;
-					sum.blue += (backupOrg[loc1].blue & 0xff) * weight;
+					sum.red += ((int)backupOrg[loc1].red) * weight;
+					sum.green += ((int)backupOrg[loc1].green) * weight;
+					sum.blue += ((int)backupOrg[loc1].blue) * weight;
 					kCol = (kCol + 1) % 3;
 				}
 				kRow = (kRow + 1) % 3;
@@ -83,9 +80,9 @@ void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 			int minsumgreen = maxsum < 255 ? maxsum : 255;
 			maxsum = sum.blue * (sum.blue > 0);
 			int minsumblue = maxsum < 255 ? maxsum : 255;
-			pixelsImg[loc].red = minsumred & 0xff;
-			pixelsImg[loc].green = minsumgreen & 0xff;
-			pixelsImg[loc].blue = minsumblue & 0xff;
+			pixelsImg[loc].red = (unsigned char) minsumred;
+			pixelsImg[loc].green = (unsigned char) minsumgreen;
+			pixelsImg[loc].blue = (unsigned char) minsumblue;
 		}
 	}
 
@@ -95,13 +92,10 @@ void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 	for (row = 0 ; row < locn ; row++) {
 		aloc += locn;
 		int bloc = aloc + aloc + aloc;
-		for (col = 0 ; col < locn ; col += 2) {
+		for (col = 0 ; col < locn ; col++) {
 			int ploc = aloc + col;
 			int iloc = bloc + col + col + col;
 			memcpy(image->data + iloc, pixelsImg + ploc, 3 * sizeof(char));
-			int vloc = aloc + col + 1;
-			int uloc = bloc + col + col + col + 3;
-			memcpy(image->data + uloc, pixelsImg + vloc, 3 * sizeof(char));
 		}
 	}
 
@@ -112,23 +106,20 @@ void doConvolution(Image *image, int kernel[3][3], int kernelScale) {
 void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 
 	int row, col, locn = n;
+	int nn = 1000000 * sizeof(pixel);
 
-	pixel* pixelsImg = malloc(locn*locn*sizeof(pixel));
-	pixel* backupOrg = malloc(locn*locn*sizeof(pixel));
+	pixel* pixelsImg = malloc(nn);
+	pixel* backupOrg = malloc(nn);
 
 	int aloc = 0 - locn;
 	for (row = 0 ; row < locn ; row++) {
 		aloc += locn;
 		int bloc = aloc + aloc + aloc;
-		for (col = 0 ; col < locn ; col += 2) {
+		for (col = 0 ; col < locn ; col++) {
 			int ploc = aloc + col;
 			int iloc = bloc + col + col + col;
 			memcpy(pixelsImg + ploc, image->data + iloc, 3 * sizeof(char));
 			memcpy(backupOrg + ploc, pixelsImg + ploc, 3 * sizeof(char));
-			int vloc = aloc + col + 1;
-			int uloc = bloc + col + col + col + 3;
-			memcpy(pixelsImg + vloc, image->data + uloc, 3 * sizeof(char));
-			memcpy(backupOrg + vloc, pixelsImg + vloc, 3 * sizeof(char));
 		}
 	}
 
@@ -138,7 +129,7 @@ void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 	int locf = 0;
 	for (i = 1 ; i < dimReduce; i++) {
 		locf += locn;
-		int iimax = (i - 1) * (i-1 > 0), iimin = (i+1 < locn-1 ? i+1 : locn-1);
+		int iimax = i-1, iimin = i+1;
 		for (j =  1 ; j < dimReduce ; j++) {
 			int loc = locf + j;
 			//  pixelsImg[loc] = applyKernel(locn, i, j, backupOrg, kernelSize, kernel, kernelScale, filter);
@@ -153,7 +144,7 @@ void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 			memset(&sum, 0, sizeof(pixel_sum));
 
 			int kRow = 0;
-			int jjmax = (j - 1) * (j-1 > 0), jjmin = (j+1 < locn-1 ? j+1 : locn-1);
+			int jjmax =j-1, jjmin = j+1;
 			for(ii = iimax; ii <= iimin; ii++) {
 				int kCol = 0;
 				int loc2 = ii * locn;
@@ -163,9 +154,9 @@ void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 
 					int loc1 = loc2 + jj;
 					int weight = kernel[kRow][kCol];
-					sum.red += (backupOrg[loc1].red & 0xff) * weight;
-					sum.green += (backupOrg[loc1].green & 0xff) * weight;
-					sum.blue += (backupOrg[loc1].blue & 0xff) * weight;
+					sum.red += ((int)backupOrg[loc1].red) * weight;
+					sum.green += ((int)backupOrg[loc1].green) * weight;
+					sum.blue += ((int)backupOrg[loc1].blue) * weight;
 
 					int loopcond = (int)(backupOrg[loc1].red + backupOrg[loc1].green + backupOrg[loc1].blue);
 					if (loopcond > min_intensity) {
@@ -216,9 +207,9 @@ void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 			int minsumgreen = maxsum < 255 ? maxsum : 255;
 			maxsum = sum.blue * (sum.blue > 0);
 			int minsumblue = maxsum < 255 ? maxsum : 255;
-			pixelsImg[loc].red = minsumred & 0xff;
-			pixelsImg[loc].green = minsumgreen & 0xff;
-			pixelsImg[loc].blue = minsumblue & 0xff;
+			pixelsImg[loc].red = (unsigned char) minsumred;
+			pixelsImg[loc].green = (unsigned char) minsumgreen;
+			pixelsImg[loc].blue = (unsigned char) minsumblue;
 		}
 	}
 
@@ -227,13 +218,10 @@ void doConvolutionFilter(Image *image, int kernel[3][3], int kernelScale) {
 	for (row = 0 ; row < locn ; row++) {
 		aloc += locn;
 		int bloc = aloc + aloc + aloc;
-		for (col = 0 ; col < locn ; col += 2) {
+		for (col = 0 ; col < locn ; col++) {
 			int ploc = aloc + col;
 			int iloc = bloc + col + col + col;
 			memcpy(image->data + iloc, pixelsImg + ploc, 3 * sizeof(char));
-			int vloc = aloc + col + 1;
-			int uloc = bloc + col + col + col + 3;
-			memcpy(image->data + uloc, pixelsImg + vloc, 3 * sizeof(char));
 		}
 	}
 
