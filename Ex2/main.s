@@ -1,7 +1,7 @@
 // 316093202 Shlomo Shatz
 # This is the second exercise in Computer Organization course
 	.data	# data section
-id:	.quad	316093202	# the id stored in this memory
+id:	.quad	123456789	# the id stored in this memory
 
     .section	.rodata	# read only data section
 strnum: .string	"%lu\n" 	# the number is passed to the string
